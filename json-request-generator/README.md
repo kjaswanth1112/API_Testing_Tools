@@ -1,0 +1,1 @@
+A smart tool that generates unique API requests by replacing specific fields with dynamically generated data using a fake API. Perfect for API testers who need to simulate varied request payloads for testing endpoints.
