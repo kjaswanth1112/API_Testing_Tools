@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Comparison and Formatter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .json-box {
+            width: 48%;
+            border: 1px solid #ccc;
+            padding: 15px;
+            overflow: auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .highlight {
+            background-color: #ffe082; /* Light amber for highlight */
+            padding: 0.1em 0.3em;
+            border-radius: 3px;
+        }
+        .missing {
+            background-color: #ffcdd2; /* Light red for missing */
+            padding: 0.1em 0.3em;
+            border-radius: 3px;
+        }
+        .json-label {
+            font-weight: bold;
+            color: #007BFF;
+            display: block;
+            margin-bottom: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 180px; /* Increased height */
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+            font-family: monospace; /* Use monospace font for JSON */
+            font-size: 14px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            font-weight: bold;
+            color: green;
+            margin-top: 10px;
+        }
+        .mismatch-count {
+            font-weight: bold;
+            color: red;
+            margin-top: 5px;
+        }
+        footer {
+            text-align: center;
+            font-style: italic;
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        label {
+            margin-left: 15px;
+        }
+        label input[type="checkbox"] {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <textarea id="inputJson1" placeholder="Enter JSON 1 here"></textarea>
+        <textarea id="inputJson2" placeholder="Enter JSON 2 here"></textarea>
+        <div>
+            <button onclick="compareJson()">Compare JSON</button>
+            <button onclick="newDiff()">New Diff</button>
+            <label>
+                <input type="checkbox" id="compareStrings" checked> Compare strings
+            </label>
+            <label>
+                <input type="checkbox" id="compareValues"> Compare keys and values
+            </label>
+        </div>
+    </div>
+    <div id="comparisonMessage" class="message"></div>
+    <div id="mismatchCounts" class="mismatch-count"></div>
+    <div class="container">
+        <div class="json-box" id="json1"></div>
+        <div class="json-box" id="json2"></div>
+    </div>
+    <div class="container">
+        <div class="json-box">
+            <textarea id="beautifyInput" placeholder="Enter JSON to beautify"></textarea>
+            <button onclick="beautifyJson()">Beautify JSON</button>
+        </div>
+        <div class="json-box" id="beautifiedJson"></div>
+    </div>
+    <footer>
+        <i>JK</i>
+    </footer>
+    <script>
+        function compareJson() {
+            const json1Box = document.getElementById('json1');
+            const json2Box = document.getElementById('json2');
+            const inputJson1 = document.getElementById('inputJson1').value;
+            const inputJson2 = document.getElementById('inputJson2').value;
+            const compareStrings = document.getElementById('compareStrings').checked;
+            const compareValues = document.getElementById('compareValues').checked;
+            const comparisonMessage = document.getElementById('comparisonMessage');
+            const mismatchCounts = document.getElementById('mismatchCounts');
+
+            try {
+                const json1 = JSON.parse(inputJson1);
+                const json2 = JSON.parse(inputJson2);
+
+                let stringMismatchCount = 0;
+                let valueMismatchCount = 0;
+
+                json1Box.innerHTML = `<div class="json-label">JSON 1</div><pre>${formatAndHighlight(json1, json2, compareStrings, compareValues, (type) => {
+                    if (type === 'string') stringMismatchCount++;
+                    if (type === 'value') valueMismatchCount++;
+                })}</pre>`;
+                json2Box.innerHTML = `<div class="json-label">JSON 2</div><pre>${formatAndHighlight(json2, json1, compareStrings, compareValues, (type) => {
+                    if (type === 'string') stringMismatchCount++;
+                    if (type === 'value') valueMismatchCount++;
+                })}</pre>`;
+
+                if (stringMismatchCount === 0 && valueMismatchCount === 0) {
+                    comparisonMessage.textContent = 'JSONs are identical based on selected criteria.';
+                } else {
+                    comparisonMessage.textContent = '';
+                }
+                mismatchCounts.textContent = `String mismatches: ${stringMismatchCount}, Value mismatches: ${valueMismatchCount}`;
+
+            } catch (e) {
+                alert('Invalid JSON input');
+                json1Box.innerHTML = '';
+                json2Box.innerHTML = '';
+                comparisonMessage.textContent = '';
+                mismatchCounts.textContent = '';
+            }
+        }
+
+        function formatAndHighlight(json1, json2, compareStrings, compareValues, countMismatch) {
+            const json1Str = JSON.stringify(json1, null, 2);
+            const json2Str = JSON.stringify(json2, null, 2);
+            const json2Parsed = JSON.parse(json2Str); // Parse for easier comparison
+
+            let formattedJson = '';
+            const json1Lines = json1Str.split('\n');
+
+            json1Lines.forEach(line => {
+                const keyMatch = line.match(/"(.*?)"\s*:/);
+                if (keyMatch) {
+                    const key = keyMatch[1];
+                    const valueMatch = line.match(/: (.+?),?/);
+                    const stringValueMatch = line.match(/: "(.*?)"(?:,?)$/);
+
+                    let correspondingValue2;
+                    try {
+                        // Safely try to access the value using dot notation
+                        const keys = line.substring(line.indexOf('"') + 1, line.indexOf('" :')).split('.');
+                        let tempObj = json2Parsed;
+                        keys.forEach(k => {
+                            if (tempObj && typeof tempObj === 'object' && tempObj.hasOwnProperty(k)) {
+                                tempObj = tempObj[k];
+                            } else {
+                                tempObj = undefined;
+                            }
+                        });
+                        correspondingValue2 = tempObj;
+                    } catch (e) {
+                        correspondingValue2 = undefined;
+                    }
+
+                    const lineWithoutComma = line.endsWith(',') ? line.slice(0, -1) : line;
+                    const correspondingLine2 = json2Str.split('\n').find(l => l.includes(`"${key}"`));
+
+                    if (compareValues && valueMatch) {
+                        const value1 = valueMatch[1].trim();
+                        let value2Str = correspondingLine2 ? correspondingLine2.match(/: (.+?),?/) : null;
+                        const value2 = value2Str ? value2Str[1].trim() : undefined;
+                        if (value1 !== value2) {
+                            formattedJson += `<span class="highlight">${line}</span>\n`;
+                            countMismatch('value');
+                        } else {
+                            formattedJson += line + '\n';
+                        }
+                    } else if (compareStrings && stringValueMatch) {
+                        const stringValue1 = stringValueMatch[1];
+                        const stringValue2Match = correspondingLine2 ? correspondingLine2.match(/: "(.*?)"(?:,?)$/) : null;
+                        const stringValue2 = stringValue2Match ? stringValue2Match[1] : undefined;
+                        if (stringValue1 !== stringValue2) {
+                            formattedJson += `<span class="highlight">${line}</span>\n`;
+                            countMismatch('string');
+                        } else {
+                            formattedJson += line + '\n';
+                        }
+                    } else if (!correspondingLine2) {
+                        formattedJson += `<span class="missing">${line}</span>\n`;
+                    } else {
+                        formattedJson += line + '\n';
+                    }
+                } else {
+                    formattedJson += line + '\n';
+                }
+            });
+
+            return formattedJson;
+        }
+
+        function beautifyJson() {
+            const beautifiedJsonBox = document.getElementById('beautifiedJson');
+            const beautifyInput = document.getElementById('beautifyInput').value;
+
+            try {
+                const parsedJson = JSON.parse(beautifyInput);
+                const beautifiedJson = JSON.stringify(parsedJson, null, 2);
+                beautifiedJsonBox.innerHTML = `<pre>${beautifiedJson}</pre>`;
+            } catch (e) {
+                beautifiedJsonBox.innerHTML = '<span style="color: red;">Invalid JSON input</span>';
+            }
+        }
+
+        function newDiff() {
+            document.getElementById('inputJson1').value = '';
+            document.getElementById('inputJson2').value = '';
+            document.getElementById('json1').innerHTML = '';
+            document.getElementById('json2').innerHTML = '';
+            document.getElementById('comparisonMessage').textContent = '';
+            document.getElementById('mismatchCounts').textContent = '';
+            document.getElementById('beautifyInput').value = '';
+            document.getElementById('beautifiedJson').innerHTML = '';
+        }
+
+        document.getElementById('compareStrings').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('compareValues').checked = false;
+            }
+        });
+
+        document.getElementById('compareValues').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('compareStrings').checked = false;
+            }
+        });
+    </script>
+</body>
+</html>
