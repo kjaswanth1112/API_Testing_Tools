@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0; /* Reset default body margin */
+            padding-bottom: 30px; /* Add padding to prevent footer overlap */
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px; /* Add padding to the container */
+            background-color: #fff; /* Add a white background to the container */
+            border-radius: 8px; /* Add rounded corners to the container */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+        }
+        .section-title {
+            background-color: #d1c4e9;
+            padding: 12px; /* Increase padding */
+            border-radius: 6px; /* Adjust border radius */
+            margin-bottom: 15px; /* Increase margin */
+            color: #333; /* Darker text for better readability */
+            font-weight: bold; /* Make the title bold */
+            text-align: center; /* Center the title */
+        }
+        .api-section {
+            border: 1px solid #ccc;
+            margin-bottom: 15px; /* Increase margin */
+            border-radius: 6px; /* Adjust border radius */
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow for each section */
+        }
+        .banner {
+            background-color: #e0f7fa;
+            padding: 12px; /* Increase padding */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0; /* Add a subtle bottom border */
+        }
+        .banner h3, .banner span {
+            margin: 0;
+        }
+        .banner select, .banner input[type="text"] {
+            padding: 8px; /* Add padding to form elements */
+            border: 1px solid #ddd; /* Light border */
+            border-radius: 4px; /* Rounded corners */
+            margin-right: 10px; /* Add some spacing */
+        }
+        .banner input[type="text"] {
+            flex-grow: 1;
+        }
+        .content {
+            display: block;
+            padding: 15px; /* Increase padding */
+            background-color: #e8f5e9;
+        }
+        .content p {
+            margin-bottom: 10px;
+        }
+        .request-response {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px; /* Space between request and response */
+        }
+        .request, .response {
+            width: calc(50% - 7.5px); /* Adjust width with gap */
+        }
+        .request h4, .response h4 {
+            margin-top: 0;
+            color: #555; /* Slightly darker heading */
+            margin-bottom: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: 120px; /* Slightly taller textarea */
+            background-color: #f3e5f5;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: monospace; /* Monospace font for code-like text */
+            font-size: 14px;
+            box-sizing: border-box; /* Ensure padding doesn't affect width */
+        }
+        .add-button, .delete-button {
+            margin: 15px auto; /* Center the button */
+            display: block; /* Make it a block element */
+            width: 50px; /* Fixed width */
+            height: 50px; /* Fixed height for a circle */
+            border-radius: 50%; /* Make it a circle */
+            background-color: #f0f8ff; /* Light background */
+            color: #007bff;
+            border: 2px solid #007bff;
+            cursor: pointer;
+            font-size: 28px; /* Slightly larger plus sign */
+            text-align: center;
+            line-height: 46px; /* Vertically center the text */
+            text-decoration: none; /* Remove default link underline */
+        }
+        .delete-button {
+            color: #dc3545;
+            border-color: #dc3545;
+            font-size: 28px; /* Ensure consistent size */
+            line-height: 46px; /* Ensure consistent vertical alignment */
+        }
+        .banner .delete-button {
+            display: inline-flex; /* Align with other banner elements */
+            width: 30px; /* Smaller delete button in banner */
+            height: 30px;
+            border-radius: 50%;
+            font-size: 20px;
+            line-height: 26px;
+            text-align: center;
+            border: 1px solid #dc3545;
+            background-color: #ffebee;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+        }
+        .banner .delete-button:hover {
+            background-color: #f8d7da;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-style: italic;
+            color: royalblue;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API JSON Sample Requests</h1>
+
+        <div class="section-title">Cardinal Gateway</div>
+        <div id="cardinal-gateway">
+            <div class="api-section" id="cardinal-api1">
+                <div class="banner" onclick="toggleContent('cardinal-api1')">
+                    <select id="method-cardinal-api1">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                    <input type="text" id="url-cardinal-api1" placeholder="Enter URL" style="flex-grow: 1;">
+                    <input type="text" id="description-cardinal-api1" placeholder="Enter description" style="flex-grow: 1;">
+                    <span class="delete-button" onclick="deleteApiSection('cardinal-api1')">-</span>
+                </div>
+                <div class="content">
+                    <p>Description: <span id="desc-cardinal-api1"></span></p>
+                    <div class="request-response">
+                        <div class="request">
+                            <h4>Request</h4>
+                            <textarea id="request-cardinal-api1"></textarea>
+                        </div>
+                        <div class="response">
+                            <h4>Response</h4>
+                            <textarea id="response-cardinal-api1"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveData('cardinal-api1')">Save</button>
+                </div>
+            </div>
+        </div>
+        <a href="javascript:void(0);" class="add-button" onclick="addApiSection('cardinal-gateway')">+</a>
+
+        <div class="section-title">Primary Customer Gateway</div>
+        <div id="primary-customer-gateway">
+            <div class="api-section" id="primary-api1">
+                <div class="banner" onclick="toggleContent('primary-api1')">
+                    <select id="method-primary-api1">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                    <input type="text" id="url-primary-api1" placeholder="Enter URL" style="flex-grow: 1;">
+                    <input type="text" id="description-primary-api1" placeholder="Enter description" style="flex-grow: 1;">
+                    <span class="delete-button" onclick="deleteApiSection('primary-api1')">-</span>
+                </div>
+                <div class="content">
+                    <p>Description: <span id="desc-primary-api1"></span></p>
+                    <div class="request-response">
+                        <div class="request">
+                            <h4>Request</h4>
+                            <textarea id="request-primary-api1"></textarea>
+                        </div>
+                        <div class="response">
+                            <h4>Response</h4>
+                            <textarea id="response-primary-api1"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveData('primary-api1')">Save</button>
+                </div>
+            </div>
+        </div>
+        <a href="javascript:void(0);" class="add-button" onclick="addApiSection('primary-customer-gateway')">+</a>
+    </div>
+    <footer>
+        JK
+    </footer>
+    <script>
+        let cardinalApiCount = 1;
+        let primaryApiCount = 1;
+
+        function toggleContent(id) {
+            const content = document.querySelector(`#${id} .content`);
+            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function saveData(id) {
+            const method = document.querySelector(`#${id} select`).value;
+            const url = document.querySelector(`#${id} input[type="text"]`).value;
+            const description = document.querySelector(`#${id} input[type="text"]:nth-child(3)`).value;
+            const request = document.querySelector(`#${id} .request textarea`).value;
+            const response = document.querySelector(`#${id} .response textarea`).value;
+            localStorage.setItem(`${id}-method`, method);
+            localStorage.setItem(`${id}-url`, url);
+            localStorage.setItem(`${id}-description`, description);
+            localStorage.setItem(`${id}-request`, request);
+            localStorage.setItem(`${id}-response`, response);
+        }
+
+        function loadData(id) {
+            const method = localStorage.getItem(`${id}-method`);
+            const url = localStorage.getItem(`${id}-url`);
+            const description = localStorage.getItem(`${id}-description`);
+            const request = localStorage.getItem(`${id}-request`);
+            const response = localStorage.getItem(`${id}-response`);
+            if (method) document.querySelector(`#${id} select`).value = method;
+            if (url) document.querySelector(`#${id} input[type="text"]`).value = url;
+            if (description) document.querySelector(`#${id} input[type="text"]:nth-child(3)`).value = description;
+            if (request) document.querySelector(`#${id} .request textarea`).value = request;
+            if (response) document.querySelector(`#${id} .response textarea`).value = response;
+            if (description) document.querySelector(`#${id} .content span`).textContent = description;
+        }
+        function addApiSection(sectionId) {
+            let apiCount;
+            let sectionPrefix;
+            if (sectionId === 'cardinal-gateway') {
+                cardinalApiCount++;
+                apiCount = cardinalApiCount;
+                sectionPrefix = 'cardinal-api';
+            } else if (sectionId === 'primary-customer-gateway') {
+                primaryApiCount++;
+                apiCount = primaryApiCount;
+                sectionPrefix = 'primary-api';
+            }
+
+            const apiSection = document.createElement('div');
+            apiSection.className = 'api-section';
+            apiSection.id = `${sectionPrefix}${apiCount}`;
+            apiSection.innerHTML = `
+                <div class="banner" onclick="toggleContent('${sectionPrefix}${apiCount}')">
+                    <select id="method-${sectionPrefix}${apiCount}">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                    <input type="text" id="url-${sectionPrefix}${apiCount}" placeholder="Enter URL" style="flex-grow: 1;">
+                    <input type="text" id="description-${sectionPrefix}${apiCount}" placeholder="Enter description" style="flex-grow: 1;">
+                    <span class="delete-button" onclick="deleteApiSection('${sectionPrefix}${apiCount}')">-</span>
+                </div>
+                <div class="content">
+                    <p>Description: <span id="desc-${sectionPrefix}${apiCount}"></span></p>
+                    <div class="request-response">
+                        <div class="request">
+                            <h4>Request</h4>
+                            <textarea id="request-${sectionPrefix}${apiCount}"></textarea>
+                        </div>
+                        <div class="response">
+                            <h4>Response</h4>
+                            <textarea id="response-${sectionPrefix}${apiCount}"></textarea>
+                        </div>
+                    </div>
+                    <button onclick="saveData('${sectionPrefix}${apiCount}')">Save</button>
+                </div>
+            `;
+            document.getElementById(sectionId).appendChild(apiSection);
+            loadData(`${sectionPrefix}${apiCount}`);
+        }
+
+        function deleteApiSection(id) {
+            document.getElementById(id).remove();
+            localStorage.removeItem(`${id}-method`);
+            localStorage.removeItem(`${id}-url`);
+            localStorage.removeItem(`${id}-description`);
+            localStorage.removeItem(`${id}-request`);
+            localStorage.removeItem(`${id}-response`);
+            if (id.startsWith('cardinal-api')) {
+                cardinalApiCount--;
+            } else if (id.startsWith('primary-api')) {
+                primaryApiCount--;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load data for each API section
+            for (let i = 1; i <= cardinalApiCount; i++) {
+                loadData(`cardinal-api${i}`);
+            }
+            for (let i = 1; i <= primaryApiCount; i++) {
+                loadData(`primary-api${i}`);
+            }
+        });
+    </script>
+</body>
+</html>
