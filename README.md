@@ -49,9 +49,9 @@ This tool replaces elements of a request to create unique requests using Faker A
 
 ## 📫 Let's Connect
 
-- LinkedIn:[https://www.linkedin.com/in/jaswanth-k-466a64218/]
+- LinkedIn:https://www.linkedin.com/in/jaswanth-k-466a64218/
 - Portfolio
-- 📧 Email: [kjaswanth1112gmail.com
+- 📧 Email:kjaswanth1112gmail.com
 
 ---
 
