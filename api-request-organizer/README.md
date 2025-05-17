@@ -1,0 +1,1 @@
+A browser-based tool for organizing, testing, and documenting API requests. Built with HTML, CSS, and JavaScript, it supports dynamic request sections, localStorage persistence, and categorized API gateways—ideal for testers and developers working with REST APIs.
